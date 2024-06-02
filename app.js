@@ -60,6 +60,22 @@ class User {
       });
     }
   }
+
+  // Create an instance of the BoxingApplication
+  const app = new BoxingApplication();
+  
+  // Register a new user
+  app.authentication.registerUser("John Doe", "john@example.com", "password123");
+  
+  // Login the user
+  app.authentication.loginUser("john@example.com", "password123");
+  
+  // Create a workout
+  app.createWorkout("Beginner Boxing", "Basic boxing techniques for beginners", 30);
+  
+  // Display available workouts
+  app.displayWorkouts();
+  
   // Get the HTML elements
 const registrationForm = document.getElementById('registrationForm');
 const loginForm = document.getElementById('loginForm');
@@ -119,20 +135,6 @@ registrationForm.addEventListener('submit', function(event) {
 
 
 
-  
 
 
-  // Create an instance of the BoxingApplication
-  const app = new BoxingApplication();
-  
-  // Register a new user
-  app.authentication.registerUser("John Doe", "john@example.com", "password123");
-  
-  // Login the user
-  app.authentication.loginUser("john@example.com", "password123");
-  
-  // Create a workout
-  app.createWorkout("Beginner Boxing", "Basic boxing techniques for beginners", 30);
-  
-  // Display available workouts
-  app.displayWorkouts();
+
