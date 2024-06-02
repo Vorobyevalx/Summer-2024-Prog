@@ -102,6 +102,25 @@ displayWorkouts();
 
 
 
+// Event listener for user registration
+registrationForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    const name = document.getElementById('nameInput').value;
+    const email = document.getElementById('emailInput').value;
+    const password = document.getElementById('passwordInput').value;
+    app.authentication.registerUser(name, email, password);
+    registrationForm.reset();
+    
+    // Redirect to a new page after successful registration
+    window.location.href = 'dashboard.html';
+  });
+
+
+
+
+
+  
+
 
   // Create an instance of the BoxingApplication
   const app = new BoxingApplication();
