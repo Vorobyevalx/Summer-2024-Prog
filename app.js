@@ -1,85 +1,80 @@
-// Boxing Application
-
 // User class
 class User {
-    constructor(name, email, password) {
-      this.name = name;
-      this.email = email;
-      this.password = password;
-    }
+  constructor(name, email, password) {
+    this.name = name;
+    this.email = email;
+    this.password = password;
+    this.weeklyProgress = 0;
+    this.weeklyGoal = 5;
+    this.totalProgress = 0;
   }
-  
-  // Authentication class
-  class Authentication {
-    constructor() {
-      this.users = [];
-    }
-  
-    registerUser(name, email, password) {
-      const newUser = new User(name, email, password);
-      this.users.push(newUser);
-      console.log(`User ${name} registered successfully.`);
-    }
-  
-    loginUser(email, password) {
-      const user = this.users.find(user => user.email === email && user.password === password);
-      if (user) {
-        console.log(`User ${user.name} logged in successfully.`);
-      } else {
-        console.log("Invalid email or password.");
-      }
-    }
-  }
-               
-  // Workout class
-  class Workout {
-    constructor(name, description, duration) {
-      this.name = name;
-      this.description = description;
-      this.duration = duration;
-    }
-  }
-  
-  // Boxing Application class
-  class BoxingApplication {
-    constructor() {
-      this.authentication = new Authentication();
-      this.workouts = [];
-    }
-  
-    createWorkout(name, description, duration) {
-      const newWorkout = new Workout(name, description, duration);
-      this.workouts.push(newWorkout);
-      console.log(`Workout ${name} created successfully.`);
-    }
-  
-    displayWorkouts() {
-      console.log("Available Workouts:");
-      this.workouts.forEach(workout => {
-        console.log(`- ${workout.name}: ${workout.description} (${workout.duration} minutes)`);
-      });
-    }
+}
+
+// Authentication class
+class Authentication {
+  constructor() {
+    this.users = [];
   }
 
-  // Create an instance of the BoxingApplication
-  const app = new BoxingApplication();
-  
-  // Register a new user
-  app.authentication.registerUser("John Doe", "john@example.com", "password123");
-  
-  // Login the user
-  app.authentication.loginUser("john@example.com", "password123");
-  
-  // Create a workout
-  app.createWorkout("Beginner Boxing", "Basic boxing techniques for beginners", 30);
-  
-  // Display available workouts
-  app.displayWorkouts();
-  
-  // Get the HTML elements
+  registerUser(name, email, password) {
+    // Check if the email is already registered
+    const existingUser = this.users.find(user => user.email === email);
+    if (existingUser) {
+      console.log(`User with email ${email} already exists.`);
+      return false;
+    }
+
+    const newUser = new User(name, email, password);
+    this.users.push(newUser);
+    console.log(`User ${name} registered successfully.`);
+    return true;
+  }
+
+  loginUser(email, password) {
+    const user = this.users.find(user => user.email === email && user.password === password);
+    if (user) {
+      console.log(`User ${user.name} logged in successfully.`);
+      return user;
+    } else {
+      console.log("Invalid email or password.");
+      return null;
+    }
+  }
+}
+
+// Boxing Application class
+class BoxingApplication {
+  constructor() {
+    this.authentication = new Authentication();
+    this.workouts = [];
+    this.currentUser = null;
+  }
+
+
+  createWorkout(name, description, duration) {
+    const newWorkout = new Workout(name, description, duration);
+    this.workouts.push(newWorkout);
+    console.log(`Workout ${name} created successfully.`);
+  }
+
+  displayWorkouts() {
+    const workoutList = document.getElementById('workoutList');
+    workoutList.innerHTML = '';
+
+    this.workouts.forEach(workout => {
+      const listItem = document.createElement('li');
+      listItem.textContent = `${workout.name}: ${workout.description} (${workout.duration} minutes)`;
+      workoutList.appendChild(listItem);
+    });
+  }
+}
+
+// Create an instance of the BoxingApplication
+const app = new BoxingApplication();
+
+// Get the HTML elements
 const registrationForm = document.getElementById('registrationForm');
 const loginForm = document.getElementById('loginForm');
-const workoutList = document.getElementById('workoutList');
 
 // Event listener for user registration
 registrationForm.addEventListener('submit', function(event) {
@@ -87,8 +82,14 @@ registrationForm.addEventListener('submit', function(event) {
   const name = document.getElementById('nameInput').value;
   const email = document.getElementById('emailInput').value;
   const password = document.getElementById('passwordInput').value;
-  app.authentication.registerUser(name, email, password);
-  registrationForm.reset();
+
+  const registrationSuccess = app.authentication.registerUser(name, email, password);
+  if (registrationSuccess) {
+    registrationForm.reset();
+    window.location.href = 'dashboard.html';
+  } else {
+    alert('Registration failed. Please try again.');
+  }
 });
 
 // Event listener for user login
@@ -96,45 +97,15 @@ loginForm.addEventListener('submit', function(event) {
   event.preventDefault();
   const email = document.getElementById('loginEmailInput').value;
   const password = document.getElementById('loginPasswordInput').value;
-  app.authentication.loginUser(email, password);
-  loginForm.reset();
+
+  const loginSuccess = app.authentication.loginUser(email, password);
+  if (loginSuccess) {
+    loginForm.reset();
+    window.location.href = 'dashboard.html';
+  } else {
+    alert('Login failed. Please check your email and password.');
+  }
 });
 
-// Function to display workouts
-function displayWorkouts() {
-  workoutList.innerHTML = '';
-  app.workouts.forEach(workout => {
-    const listItem = document.createElement('li');
-    listItem.textContent = `${workout.name}: ${workout.description} (${workout.duration} minutes)`;
-    workoutList.appendChild(listItem);
-  });
-}
-
 // Initial display of workouts
-displayWorkouts();
-
-
-
-
-
-
-// Event listener for user registration
-registrationForm.addEventListener('submit', function(event) {
-    event.preventDefault();
-    const name = document.getElementById('nameInput').value;
-    const email = document.getElementById('emailInput').value;
-    const password = document.getElementById('passwordInput').value;
-    app.authentication.registerUser(name, email, password);
-    registrationForm.reset();
-    
-    // Redirect to a new page after successful registration
-    window.location.href = 'dashboard.html';
-  });
-
-
-
-
-
-
-
-
+app.displayWorkouts();
